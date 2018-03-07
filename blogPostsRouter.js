@@ -1,70 +1,103 @@
-const uuid = require('uuid');
+const express = require('express');
+const router = express.Router();
 
-// This module provides volatile storage, using a `BlogPost`
-// model. We haven't learned about databases yet, so for now
-// we're using in-memory storage. This means each time the app stops, our storage
-// gets erased.
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
 
-// Don't worry too much about how BlogPost is implemented.
-// Our concern in this example is with how the API layer
-// is implemented, and getting it to use an existing model.
+const {blogPost} = require('./models');
+
+//Dummy posts
 
 
-function StorageException(message) {
-   this.message = message;
-   this.name = "StorageException";
-}
+//Create GET and POST requests for /blog-posts
 
-const BlogPosts = {
-  create: function(title, content, author, publishDate) {
-    const post = {
-      id: uuid.v4(),
-      title: title,
-      content: content,
-      author: author,
-      publishDate: publishDate || Date.now()
-    };
-    this.posts.push(post);
-    return post;
-  },
-  get: function(id=null) {
-    // if id passed in, retrieve single post,
-    // otherwise send all posts.
-    if (id !== null) {
-      return this.posts.find(post => post.id === id);
+  //GET request
+router.get('/', (req, res) => {
+  res.json(blogPost.get());
+});
+
+  //POST request
+router.post('/', jsonParser, (req, res) => {
+  //ensure 'title', 'content', 'author', 'pubDate (optional)' are in the request body
+  const requireFields = ['title', 'content', 'author'];
+  for (let i=0; i<requiredFields.length; i++) {
+    const field = requiredFields[i];
+    if (!(field in Req.body)) {
+      const message = `Missing \`${field}\` in request body`
+      console.error(message);
+      return res.status(400).send(message);
     }
-    // return posts sorted (descending) by
-    // publish date
-    return this.posts.sort(function(a, b) {
-      return b.publishDate - a.publishDate
-    });
-  },
-  delete: function(id) {
-    const postIndex = this.posts.findIndex(
-      post => post.id === id);
-    if (postIndex > -1) {
-      this.posts.splice(postIndex, 1);
-    }
-  },
-  update: function(updatedPost) {
-    const {id} = updatedPost;
-    const postIndex = this.posts.findIndex(
-      post => post.id === updatedPost.id);
-    if (postIndex === -1) {
-      throw new StorageException(
-        `Can't update item \`${id}\` because doesn't exist.`)
-    }
-    this.posts[postIndex] = Object.assign(
-      this.posts[postIndex], updatedPost);
-    return this.posts[postIndex];
   }
-};
+  const item = blogPost.create(req.body.title, req.body.content, req.body.author);
+  res.status(201).json(item);
+});
 
-function createBlogPostsModel() {
-  const storage = Object.create(BlogPosts);
-  storage.posts = [];
-  return storage;
-}
+//Create DELETE and PUT requests for /blog-posts/:id
+
+  //DELETE request
+router.delete('/:id', (req, res) => {
+  blogPost.delete(req.params.id);
+  console.log(`Deleted blog post \`${req.params.ID}\``);
+  res.status(204).end();
+});
+
+  //PUT request
+/*router.put('/:id', jsonParser, (req, res) => {
+  const requiredFields = ['title', 'content', 'author', 'id'];
+  for (let i=0; i<requiredFields.length; i++) {
+    const field = requiredFields[i];
+    if (!(field in req.body)) {
+      const message = `Missing \`${field}\` in request body`
+      console.log(message);
+      return res.status(400).send(message);
+    }
+  }
+    if (req.params.id !== req.body.id) {
+      const message = (
+        `Request path id (${req.params.id}) and request body id `
+        `(${req.body.id}) must match`);
+      console.error(message);
+      return res.status(400).send(message);
+    }
 
 
-module.exports = {BlogPosts: createBlogPostsModel()};
+    console.log(`Updating bolg post id \`${req.params.id}\``);
+    const updatedItem =blogPost.update({
+      id: req.params.id,
+      title: req.body.title,
+      content: req.body.content,
+      author: req.body.author
+    });
+    res.status(204).end();
+
+})*/
+
+
+router.put('/:id', jsonParser, (req, res) => {
+  const requiredFields = ['title', 'content', 'author', 'id'];
+  for (let i=0; i<requiredFields.length; i++) {
+    const field = requiredFields[i];
+    if (!(field in req.body)) {
+      const message = `Missing \`${field}\` in request body`
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  }
+  if (req.params.id !== req.body.id) {
+    const message = (
+      `Request path id (${req.params.id}) and request body id `
+      `(${req.body.id}) must match`);
+    console.error(message);
+    return res.status(400).send(message);
+  }
+  console.log(`Updating blog post id \`${req.params.id}\``);
+  const updatedItem = blogPost.update({
+  id: req.params.id,
+  title: req.body.title,
+  content: req.body.content,
+  author: req.body.author
+  });
+  res.status(204).end();
+})
+
+module.exports = router;
