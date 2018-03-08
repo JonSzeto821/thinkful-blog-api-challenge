@@ -1,2 +1,9 @@
 language: node_js
 node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: rQO8+q57DJ4G4lGRHChuSZpcys/wLNz1ftC4gQnLb6jsRKjUTq6K3nIDtl04R9PYcp7U/FvxxzlrNEQxJBk7nYXfZSrFHcODA3tOGA5nv60yGxwhNe8LHQjlP90Q96KTyALc9mlEQWTwJaIGBUTknNzye2Hu/csTsuurbNlsEha3w3TRW44IloLQSk5eFS85GoYl13vr5Wn10BeKd6Kt2bjESaEpmwo+EOK7U68eBMTB/Xmm/plZ4YZyKjXXJatd/uo2iovnD3QnyoW3RMz4/oQujUGlIoEaOCAS9+lhQ9ZKHxvqEaKwnrrq87IsQMHTmx7ZkoR8/Bh6ER7XR/T91Y/9eEDuYh6rVmP+Z2bKAiLmRGvSbsf/XXPFWQkWKlmsQrePyXnXzY+qCfOBmH9mU1LRNYFJpLTqyEmcJc9AgJXR6cRg5+OnnxsZqv8IipFFf+WeRqF3B6QdonS5N1jQ1H898ye0THmDGnvpT6FIx1AsCxBO94v696UfD/nGIZtH3Xh4GWJRLzTL6yK6Z6N7Qk03F0sRB0ZhqOxd6ezcdszEdWZKXu3hVWvdzfGONsi8bAZVcP2eSC2GUd8hxSFRtrthm6qV7H4KR0e8ljUYe8Ku2pDm/jRHH8YCtbUYujiM/2L6GBCJm5vtrhxo1HfJLH0tIf75QWkdydkTpOAUtqA=
+  app: peaceful-caverns-93733
+  on:
+    repo: JonSzeto821/thinkful-blog-api-challenge
